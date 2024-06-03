@@ -76,27 +76,68 @@ ORDER BY DATE DESC
 LIMIT 10;
 
 -- CONSULTA 13: En la tabla client, de todos los distritos con un district_id menor que 10, ¿cuántos clientes hay de cada district_id? Muestra los resultados ordenados por district_id en orden ascendente.
-SELECT district_id, COUNT(*) AS client_count
+SELECT district_id,COUNT(district_id)
 FROM client
 WHERE district_id < 10
 GROUP BY district_id
-ORDER BY district_id ASC;
+ORDER BY district_id ASC
+;
 
 -- CONSULTA 14: En la tabla card, ¿cuántas tarjetas existen para cada type? Ordena el resultado comenzando con el type más frecuente.
-SELECT
-    T1.inventory_id,
-    T2.title,
-    T3.store_id,
-    IF(T4.return_date IS NULL OR T4.return_date < NOW(), 'Available', 'Not Available') AS availability
-FROM
-    inventory as T1
-JOIN film AS T2 ON T1.film_id = T2.film_id
-JOIN store AS T3 ON T1.store_id = T3.store_id
-LEFT JOIN rental AS T4 ON T1.inventory_id = T4.inventory_id AND T4.return_date IS NULL
-WHERE
-    T2.title = 'Academy Dinosaur'
-    AND T3.store_id = 1
-HAVING availability = 'Available';
+SELECT type,COUNT(type)
+FROM card
+GROUP BY type
+ORDER BY COUNT(type) DESC
+;
+
+-- CONSULTA 15: Using the loan table, print the top 10 account_ids based on the sum of all of their loan amounts.
+SELECT account_id,SUM(amount)
+FROM loan
+GROUP BY account_id
+ORDER BY SUM(amount) DESC
+LIMIT 10
+;
+
+-- CONSULTA 16:In the loan table, retrieve the number of loans issued for each day, before (excl) 930907, ordered by date in descending order.
+-- Posem el * perque ens conti el número de loans que hi ha en aquella data en concret.
+SELECT DATE,COUNT(*) AS NUMBER_OF_LOANS
+FROM LOAN
+WHERE DATE < '930907'
+GROUP BY date
+ORDER BY DATE DESC
+;
+
+-- CONSULTA 17: In the loan table, for each day in December 1997, count the number of loans issued for each unique loan duration, ordered by date and duration, both in ascending order. You can ignore days without any loans in your output.
+SELECT 
+    date,
+    duration,
+    COUNT(*) AS number_of_loans
+FROM 
+    loan
+WHERE 
+    date BETWEEN '12-01' AND '12-31'
+GROUP BY 
+    date, duration
+ORDER BY 
+    date ASC, duration ASC;
+;
+
+-- CONSULTA 18: In the trans table, for account_id 396, sum the amount of transactions for each type (VYDAJ = Outgoing, PRIJEM = Incoming). Your output should have the account_id, the type and the sum of amount, named as total_amount. Sort alphabetically by type.
+SELECT 
+    account_id,
+    type,
+    SUM(amount) AS total_amount
+FROM 
+    trans
+WHERE 
+    account_id = 396
+GROUP BY 
+    account_id, type
+ORDER BY 
+    type ASC;
+
+
+
 
 
 
